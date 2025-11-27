@@ -1,0 +1,50 @@
+<div class="dashboard-wrapper">
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <h3 class="sidebar-title">
+                <i class="bi bi-building"></i>
+                ELMS Dashboard
+            </h3>
+        </div>
+
+        <nav class="sidebar-nav">
+            <!-- <a routerLink="dashboard" class="nav-item active">
+                <i class="bi bi-speedometer2"></i>
+                <span>Dashboard</span>
+            </a> -->
+            <a routerLink="employees" class="nav-item" routerLinkActive="active"
+                [routerLinkActiveOptions]="{exact: false}">
+                <i class="bi bi-people"></i>
+                <span>Employees</span>
+            </a>
+            <a routerLink="leaves" class="nav-item" routerLinkActive="active"
+                [routerLinkActiveOptions]="{exact: false}">
+                <i class="bi bi-calendar-check"></i>
+                <span>Leave Management</span>
+            </a>
+            <!-- <a href="#" class="nav-item">
+                <i class="bi bi-file-earmark-bar-graph"></i>
+                <span>Reports</span>
+            </a>
+            <a href="#" class="nav-item">
+                <i class="bi bi-gear"></i>
+                <span>Settings</span>
+            </a> -->
+        </nav>
+
+        <div class="sidebar-footer">
+            <button class="sidebar-logout-btn" (click)="logOff()">
+                <i class="bi bi-box-arrow-right"></i>
+                <span>Logout</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <router-outlet></router-outlet>
+    </div>
+
+
+</div>

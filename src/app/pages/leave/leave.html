@@ -1,0 +1,206 @@
+<div class="leave-container">
+    <!-- Header Section -->
+    <div class="leave-header">
+        <h1 class="page-heading">
+            <i class="bi bi-calendar-check"></i>
+            Leave Management
+        </h1>
+        <button class="btn-add-leave" (click)="openModal()">
+            <i class="bi bi-plus-circle"></i>
+            Add Leave
+        </button>
+    </div>
+
+    <div class="tabs-container">
+        <div class="tabs">
+            <button [class.active]="currentTab === 'all-leaves'" class="tab-button" data-tab="all-leaves"
+                (click)="changeTab('all-leaves')">
+                <i class="bi bi-list-ul"></i>
+                All Leaves
+            </button>
+            @if(userRole!=="Employee"){
+            <button [class.active]="currentTab === 'pending-approval'" class="tab-button" data-tab="pending-approval"
+                (click)="changeTab('pending-approval')">
+                <i class="bi bi-clock-history"></i>
+                Pending Approval
+            </button>
+            }
+
+        </div>
+    </div>
+
+    <!-- Table Container -->
+    <div class="table-container">
+        <table class="table">
+            @if(currentTab=="all-leaves"){
+            <thead>
+                <tr>
+                    <th>Leave ID</th>
+                    <th>Employee</th>
+                    <th>Leave Type</th>
+                    <th>From Date</th>
+                    <th>To Date</th>
+                    <th>No. of Days</th>
+                    <th>Status</th>
+
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Sample Data Row 1 -->
+                @for(leave of leaveList ; track $index){
+
+
+                <tr>
+                    <td><span class="leave-id">{{$index+1}}</span></td>
+                    <td>
+                        <div class="employee-info">
+                            <i class="bi bi-person-circle"></i>
+                            <span>{{leave.employeeName}}</span>
+                        </div>
+                    </td>
+                    <td><span class="leave-type">{{leave.leaveType}}</span></td>
+                    <td>{{leave.fromDate | date:"dd-MM-yy"}}</td>
+                    <td>{{leave.toDate | date:"dd-MM-yy"}}</td>
+                    <td><span class="days-count">{{leave.noOfDays}}</span></td>
+                    @if(leave.isApproved==true){
+                    <td><span class="badge badge-approve">Approved</span></td>
+                    }@else if(leave.isApproved==false){
+                    <td><span class="badge badge-reject">Rejected</span></td>
+                    }@else {
+                    <td><span class="badge badge-pending">Pending</span></td>
+                    }
+
+                </tr>
+                }
+
+            </tbody>
+            }@else{
+                
+            <thead>
+                <tr>
+                    <th>Leave ID</th>
+                    <th>Employee</th>
+                    <th>Leave Type</th>
+                    <th>From Date</th>
+                    <th>To Date</th>
+                    <th>No. of Days</th>
+                    <th>Reason</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @for(leave of leaveListForApproval ; track $index){
+                <tr>
+                    <td><span class="leave-id">{{$index+1}}</span></td>
+                    <td>
+                        <div class="employee-info">
+                            <i class="bi bi-person-circle"></i>
+                            <span>{{leave.employeeName}}</span>
+                        </div>
+                    </td>
+                    <td><span class="leave-type">{{leave.leaveType}}</span></td>
+                    <td>{{leave.fromDate | date:"dd-MM-yy"}}</td>
+                    <td>{{leave.toDate | date:"dd-MM-yy"}}</td>
+                    <td><span class="days-count">{{leave.noOfDays}}</span></td>
+                    <td>
+                        <span class="leave-reason" title="{{leave.details}}">
+                            {{leave.details.length > 30 ? leave.details.substring(0, 30) + '...' : leave.details}}
+                        </span>
+                    </td>
+                    <td>
+                        <div class="action-buttons">
+                            <button class="btn-action btn-approve" title="Approve Leave"
+                                (click)="approveLeave(leave.leaveId)">
+                                <i class="bi bi-check-lg"></i>
+                            </button>
+                            <button class="btn-action btn-reject" title="Reject Leave"
+                                (click)="rejectLeave(leave.leaveId)">
+                                <i class="bi bi-x-lg"></i>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+                }
+
+            </tbody>
+            }
+        </table>
+
+    </div>
+
+    <!-- Add Leave Modal -->
+    <div class="modal-backdrop" *ngIf="isModalOpen" (click)="closeModal()">
+        <div class="modal-container" (click)="$event.stopPropagation()">
+            <div class="modal-header">
+                <h3>
+                    <i class="bi bi-calendar-plus"></i>
+                    Add Leave Request
+                </h3>
+                <button class="btn-close" (click)="closeModal()">
+                    <i class="bi bi-x-lg"></i>
+                </button>
+            </div>
+
+            <div class="modal-body">
+                <form [formGroup]="leaveForm" class="leave-form">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="leaveType">Leave Type <span class="required">*</span></label>
+                            <select id="leaveType" formControlName="leaveType" class="form-control">
+
+                                <option value="" disabled selected>Select leave type</option>
+                                <option value="Sick Leave">Sick Leave</option>
+                                <option value="Casual Leave">Casual Leave</option>
+                                <option value="Annual Leave">Annual Leave</option>
+                                <option value="Maternity Leave">Maternity Leave</option>
+                                <option value="Paternity Leave">Paternity Leave</option>
+                                <option value="Unpaid Leave">Unpaid Leave</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="fromDate">From Date <span class="required">*</span></label>
+                            <input type="date" id="fromDate" formControlName="fromDate" class="form-control"
+                                (change)="calculateDays()" />
+                        </div>
+
+                        <div class="form-group">
+                            <label for="toDate">To Date <span class="required">*</span></label>
+                            <input type="date" id="toDate" formControlName="toDate" class="form-control"
+                                (change)="calculateDays()" />
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="noOfDays">Number of Days</label>
+                            <input type="number" id="noOfDays" formControlName="noOfDays" class="form-control"
+                                readonly />
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="details">Reason <span class="required">*</span></label>
+                            <textarea id="details" formControlName="details" class="form-control" rows="4"
+                                placeholder="Enter reason for leave request..."></textarea>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn-secondary" (click)="closeModal()">
+                    <i class="bi bi-x-circle"></i>
+                    Cancel
+                </button>
+                <button type="button" class="btn-primary" (click)="submitLeave()">
+                    <i class="bi bi-check-circle"></i>
+                    Submit
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
