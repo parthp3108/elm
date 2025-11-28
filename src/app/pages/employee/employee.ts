@@ -15,6 +15,7 @@ export class Employee implements OnInit {
   employeeService = inject(EmployeeService)
   employeeList: EmployeeList[] = []
   isModalOpen: boolean = false;
+  userRole:string=""
 
 employeeObj:EmployeeModel=new EmployeeModel();
 
@@ -24,6 +25,13 @@ employeeObj:EmployeeModel=new EmployeeModel();
     this.getAllEmployee()
     this.deptList$=this.employeeService.getDept()
     this.roleList$=this.employeeService.getRole()
+
+    const userData=localStorage.getItem("leaveUser")
+    if(userData){
+      this.userRole=JSON.parse(userData).role
+      console.log(this.userRole);
+      
+    }
 
   }
   getAllEmployee() {
