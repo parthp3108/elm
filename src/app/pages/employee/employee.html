@@ -10,7 +10,7 @@
     </div>
 
     <!-- Employee Table -->
-    <div class="table-container">
+    <!-- <div class="table-container">
         <table class="table table-hover">
             <thead>
                 <tr>
@@ -51,6 +51,12 @@
             </tbody>
         </table>
     </div>
+</div> -->
+
+
+
+    <app-table [columns]="employeeColumns" [data]="employeeList" [fields]="employeeFields"></app-table>
+
 </div>
 
 <!-- Modal Popup -->
@@ -68,29 +74,32 @@
                 <div class="form-row">
                     <div class="form-group">
                         <label for="employeeName">Employee Name</label>
-                        <input type="text" [(ngModel)]="employeeObj.employeeName" id="employeeName" class="form-control" placeholder="Enter full name" name="employeeName">
+                        <input type="text" [(ngModel)]="employeeObj.employeeName" id="employeeName" class="form-control"
+                            placeholder="Enter full name" name="employeeName">
                     </div>
                     <div class="form-group">
                         <label for="email">Email Address</label>
-                        <input type="email" [(ngModel)]="employeeObj.emailId" id="email" class="form-control" placeholder="Enter email" name="emailId">
+                        <input type="email" [(ngModel)]="employeeObj.emailId" id="email" class="form-control"
+                            placeholder="Enter email" name="emailId">
                     </div>
-                 
+
                 </div>
 
                 <div class="form-row">
                     <div class="form-group">
                         <label for="contact">Contact Number</label>
-                        <input type="tel" [(ngModel)]="employeeObj.contactNo" id="contact" class="form-control" placeholder="Enter contact number" name="contactNo" >
+                        <input type="tel" [(ngModel)]="employeeObj.contactNo" id="contact" class="form-control"
+                            placeholder="Enter contact number" name="contactNo">
                     </div>
                     <div class="form-group">
                         <label for="department">Department</label>
                         <select [(ngModel)]="employeeObj.deptId" id="department" class="form-control" name="deptId">
                             <option value="">Select Department</option>
                             @for(dept of deptList$|async; track $index){
-                                <option [value]="dept.deptId">{{dept.deptName}}</option>
+                            <option [value]="dept.deptId">{{dept.deptName}}</option>
                             }
 
-                        
+
                         </select>
                     </div>
                 </div>
@@ -101,15 +110,16 @@
                         <select [(ngModel)]="employeeObj.role" id="role" class="form-control" name="role">
                             <option value="">Select Role</option>
                             @for(role of roleList$|async; track $index){
-                                <option >{{role}}</option>
+                            <option>{{role}}</option>
                             }
                         </select>
                     </div>
                     <div class="form-group">
                         <label for="password">Password</label>
-                        <input type="password" [(ngModel)]="employeeObj.password" id="password" class="form-control" placeholder="Enter password" name="password">
+                        <input type="password" [(ngModel)]="employeeObj.password" id="password" class="form-control"
+                            placeholder="Enter password" name="password">
                     </div>
-                       <div class="form-group">
+                    <div class="form-group">
                         <label for="gender">Gender</label>
                         <select [(ngModel)]="employeeObj.gender" id="gender" class="form-control" name="gender">
                             <option value="">Select Gender</option>
@@ -122,7 +132,7 @@
         </div>
         <div class="modal-footer">
             <button class="btn-secondary" (click)="closeModal()">Cancel</button>
-            <button class="btn-primary"(click)="onSaveEmployee()">Add Employee</button>
+            <button class="btn-primary" (click)="onSaveEmployee()">Add Employee</button>
         </div>
     </div>
 </div>

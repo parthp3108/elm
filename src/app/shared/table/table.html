@@ -1,0 +1,20 @@
+<div class="table-container">
+    <table class="table">
+        <thead>
+            <tr>
+                @for(column of columns; track $index) {
+                <th>{{column}}</th>
+                }
+            </tr>
+        </thead>
+        <tbody>
+            @for(row of data; track $index) {
+            <tr>
+                @for(field of fields; track $index) {
+                <td>{{row[field]}}</td>
+                }
+            </tr>
+            }
+        </tbody>
+    </table>
+</div>

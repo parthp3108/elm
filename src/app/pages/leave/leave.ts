@@ -2,22 +2,31 @@ import { Component, inject, OnInit } from '@angular/core';
 import { FormGroup, FormControl, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule, DatePipe } from '@angular/common';
 import { EmployeeService } from '../../services/employee';
+import { Table } from '../../shared/table/table';
 
 @Component({
   selector: 'app-leave',
-  imports: [ReactiveFormsModule, CommonModule, DatePipe],
+  imports: [ReactiveFormsModule, CommonModule, Table],
   templateUrl: './leave.html',
   styleUrl: './leave.css',
 })
 export class Leave implements OnInit {
   isModalOpen = false;
-  userRole:string=""
+  userRole: string = ""
 
   employeeService = inject(EmployeeService)
 
   leaveList: any[] = []
   leaveListForApproval: any[] = []
   currentTab: string = "all-leaves"
+
+  // Table configuration for all leaves
+  leaveColumns = ['Leave ID', 'Employee', 'Leave Type', 'From Date', 'To Date', 'No. of Days', 'Status'];
+  leaveFields = ['leaveId', 'employeeName', 'leaveType', 'startDate', 'endDate', 'noOfDays', 'leaveStatus'];
+
+  // Table configuration for pending approval
+  approvalColumns = ['Leave ID', 'Employee', 'Leave Type', 'From Date', 'To Date', 'No. of Days', 'Reason'];
+  approvalFields = ['leaveId', 'employeeName', 'leaveType', 'startDate', 'endDate', 'noOfDays', 'details'];
 
 
 
@@ -63,10 +72,10 @@ export class Leave implements OnInit {
   ngOnInit(): void {
     this.loadLeaves();
     this.loadLeavesForApproval();
-    const userData=localStorage.getItem("leaveUser")
-    if(userData){
-      const parsedData=JSON.parse(userData)
-      this.userRole=parsedData.role
+    const userData = localStorage.getItem("leaveUser")
+    if (userData) {
+      const parsedData = JSON.parse(userData)
+      this.userRole = parsedData.role
     }
   }
 
@@ -115,7 +124,8 @@ export class Leave implements OnInit {
     const empId = this.leaveForm.controls['employeeId'].value
     this.employeeService.getAllLeavesByEmpId(empId).subscribe({
       next: (res: any) => {
-        this.leaveList = res.data
+        this.leaveList = res.data.sort((a: any, b: any) => new Date(b.startDate).getTime() - new Date(a.startDate).getTime())
+        console.log(this.leaveList)
       },
       error: (err) => {
         console.log(err)
@@ -125,7 +135,7 @@ export class Leave implements OnInit {
   loadLeavesForApproval() {
     this.employeeService.getAllLeaves().subscribe({
       next: (res: any) => {
-        this.leaveListForApproval = res.data.filter((m:any) => m.isApproved == null)
+        this.leaveListForApproval = res.data.filter((m: any) => m.isApproved == null).sort((a: any, b: any) => new Date(b.startDate).getTime() - new Date(a.startDate).getTime())
       },
       error: (err) => {
         console.log(err)
@@ -138,6 +148,9 @@ export class Leave implements OnInit {
 
     this.employeeService.onAddLeave(formValue).subscribe({
       next: () => {
+        alert("Leave submitted successfully")
+        this.loadLeaves()
+        this.closeModal()
 
 
       },
@@ -148,24 +161,24 @@ export class Leave implements OnInit {
 
 
   }
-approveLeave(id:number){
-  this.employeeService.approveLeave(id).subscribe({
-    next:()=>{
-      this.loadLeavesForApproval()
-    },
-    error:(err)=>{
-      console.log(err)
-    }
-  })
-}
-rejectLeave(id:number){
-  this.employeeService.rejectLeave(id).subscribe({
-    next:()=>{
-      this.loadLeavesForApproval()
-    },
-    error:(err)=>{
-      console.log(err)
-    }
-  })  
-}
+  approveLeave(id: number) {
+    this.employeeService.approveLeave(id).subscribe({
+      next: () => {
+        this.loadLeavesForApproval()
+      },
+      error: (err) => {
+        console.log(err)
+      }
+    })
+  }
+  rejectLeave(id: number) {
+    this.employeeService.rejectLeave(id).subscribe({
+      next: () => {
+        this.loadLeavesForApproval()
+      },
+      error: (err) => {
+        console.log(err)
+      }
+    })
+  }
 }

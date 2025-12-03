@@ -4,9 +4,10 @@ import { APIResponseModel, EmployeeList, EmployeeModel } from '../../model/Emplo
 import { Observable } from 'rxjs';
 import { AsyncPipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { Table } from '../../shared/table/table';
 @Component({
   selector: 'app-employee',
-  imports: [AsyncPipe,FormsModule],
+  imports: [AsyncPipe,FormsModule,Table],
   templateUrl: './employee.html',
   styleUrl: './employee.css',
 })
@@ -16,6 +17,9 @@ export class Employee implements OnInit {
   employeeList: EmployeeList[] = []
   isModalOpen: boolean = false;
   userRole:string=""
+
+  employeeColumns=['ID','Name','Email','Contact','Department','Role']
+employeeFields=['employeeId','employeeName','emailId','contactNo','deptName','role']
 
 employeeObj:EmployeeModel=new EmployeeModel();
 
